@@ -1,4 +1,4 @@
-/node_modules
+js/node_modules/
 *.sw[po]
 /.cargo
 /dist
@@ -6,4 +6,4 @@
 src/client/util/store
 test-ledger/
 .DS_Store
-target
+program/target/
