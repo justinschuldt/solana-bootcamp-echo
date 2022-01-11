@@ -8,7 +8,13 @@
     "clean": "cargo clean --manifest-path=./program/Cargo.toml && rm -rf ./dist",
     "test": "cargo test-bpf --manifest-path=./program/Cargo.toml",
     "deploy": "solana program deploy --output json /Users/justinschuldt/code/echo-skeleton/dist/program/echo.so > last-deploy.json",
-    "build-deploy": "npm run build && npm run deploy"
+    "build-and-deploy": "npm run build && npm run deploy",
+    "make-auth-key": "solana-keygen new --outfile ./auth-keypair.json",
+
+    "install-client-deps": "cd js && npm ci && cd ../python && pip3 install solana",
+    "echo": "cd js && npm run echo",
+    "authEcho": "cd js && npm run authEcho",
+    "vendingMachineEcho": "cd js && npm run authEcho"
   },
   "author": "",
   "license": "ISC"

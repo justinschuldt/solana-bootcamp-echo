@@ -7,12 +7,33 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "echo.js",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/js/index.js",
+            "program": "${workspaceFolder}/js/echo.js",
             "args": ["asdfasdfasdf"]
-        }
+        },
+
+        {
+            "name": "authEcho.ts",
+            "type": "node",
+            "request": "launch",
+            "args": ["${workspaceFolder}/js/authEcho.ts", "worked!"],
+            "runtimeArgs": ["--nolazy", "-r", "${workspaceRoot}/js/node_modules/ts-node/register"],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+        },
+        {
+            "name": "Current TS File",
+            "type": "node",
+            "request": "launch",
+            "args": ["${relativeFile}"],
+            "runtimeArgs": ["--nolazy", "-r", "/Users/justinschuldt/code/echo-skeleton/js/node_modules/ts-node/register"],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+        },
     ]
 }

@@ -14,6 +14,8 @@ pub enum EchoInstruction {
     /// |-------|----------|--------|----------------------------------------------|
     /// | 0     | ✅       | ❌     | echo_buffer: Destination account of the data  |
     Echo { data: Vec<u8> },
+
+
     /// This instruction will allocate `buffer_size` bytes to the `authorized_buffer` account and assign it the Echo Program.
     ///
     /// The first 9 bytes of authorized_buffer will be set with the following data:
@@ -30,6 +32,8 @@ pub enum EchoInstruction {
         buffer_seed: u64,
         buffer_size: usize,
     },
+
+
     /// The contents of the data vector that is provided to the instruction will be copied into the `authorized_buffer` account
     /// starting from index 9 (will NOT override the bump_seed and buffer_seed).
     ///
@@ -47,6 +51,8 @@ pub enum EchoInstruction {
     /// | 0     | ✅       | ❌     | authorized_buffer: PDA of Echo Program that only `authority` can write to |
     /// | 1     | ❌       | ✅     | authority: Pubkey with sole write access to `authorized_buffer`           |
     AuthorizedEcho { data: Vec<u8> },
+
+    
     /// This instruction will allocate `buffer_size` bytes to the `vending_machine_buffer` account and assign it the Echo Program.
     ///
     /// The first 9 bytes of `vending_machine_buffer` will be set with the following data:
@@ -65,6 +71,8 @@ pub enum EchoInstruction {
         price: u64,
         buffer_size: usize,
     },
+
+
     /// The contents of the data vector that is provided to the instruction should be copied into the account starting from
     /// index 9 (you do NOT want to override the bump_seed and price).
     ///

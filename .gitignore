@@ -7,3 +7,5 @@ src/client/util/store
 test-ledger/
 .DS_Store
 program/target/
+auth-keypair.json
+/js/build
