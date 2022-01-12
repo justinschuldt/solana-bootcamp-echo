@@ -19,7 +19,7 @@
             "name": "authEcho.ts",
             "type": "node",
             "request": "launch",
-            "args": ["${workspaceFolder}/js/authEcho.ts", "worked!"],
+            "args": ["${workspaceFolder}/js/authEcho.ts", "wooooooooaah, it worked!"],
             "runtimeArgs": ["--nolazy", "-r", "${workspaceRoot}/js/node_modules/ts-node/register"],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
