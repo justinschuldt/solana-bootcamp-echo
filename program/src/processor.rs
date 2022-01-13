@@ -49,9 +49,29 @@ impl Processor {
                     return Err(ProgramError::InvalidAccountData);
                 }
 
+                let buffer = &mut user_account.data.borrow_mut();
+
+                assert_with_msg(
+                    buffer.len() > 0,
+                    ProgramError::InvalidArgument,
+                    "Account is not initialized.",
+                )?;
+
+                assert_with_msg(
+                    buffer[0] == 0,
+                    ProgramError::InvalidArgument,
+                    "Account data is not empty.",
+                )?;
+
+                assert_with_msg(
+                    user_account.lamports() > 0,
+                    ProgramError::InvalidArgument,
+                    "lamports is not > 0.",
+                )?;
+
                 // check the message will fit in account data,
                 // trim if needed.
-                let len = user_account.data_len();
+                let len = buffer.len();
                 let message_len = message_vec.len();
                 if message_len > len {
                     msg!("trimming message to length {}", len);
@@ -62,7 +82,6 @@ impl Processor {
                 }
 
                 // write message to account
-                let buffer = &mut user_account.data.borrow_mut();
                 buffer.copy_from_slice(&message_vec);
 
                 msg!("message written to account");

@@ -1,6 +1,6 @@
 
 
-const {
+import {
   Connection,
   sendAndConfirmTransaction,
   Keypair,
@@ -8,16 +8,16 @@ const {
   SystemProgram,
   PublicKey,
   TransactionInstruction,
-} = require("@solana/web3.js");
+} from "@solana/web3.js"
 
 const lastDeploy = require('../last-deploy.json');
 
 const { programId: programAddress} = lastDeploy
 
-const BN = require("bn.js");
+import BN = require("bn.js");
 
-const URL = "http://127.0.0.1:8899"
-// const URL = "https://api.devnet.solana.com/"
+const rpcUrl = "http://127.0.0.1:8899"
+// const rpcUrl = "https://api.devnet.solana.com/"
 
 const main = async () => {
   var args = process.argv.slice(2);
@@ -26,7 +26,7 @@ const main = async () => {
   console.log('address', programAddress)
   const programId = new PublicKey(programAddress);
 
-  const connection = new Connection(URL);
+  const connection = new Connection(rpcUrl);
 
   const feePayer = new Keypair();
   const echoBuffer = new Keypair();
@@ -35,18 +35,8 @@ const main = async () => {
   await connection.requestAirdrop(feePayer.publicKey, 2e9);
   console.log("Airdrop received");
 
-  console.log("going to echo: ", echo)
-
-  let createIx = SystemProgram.createAccount({
-    fromPubkey: feePayer.publicKey,
-    newAccountPubkey: echoBuffer.publicKey,
-    /** Amount of lamports to transfer to the created account */
-    lamports: await connection.getMinimumBalanceForRentExemption(echo.length),
-    /** Amount of space in bytes to allocate to the created account */
-    space: echo.length,
-    /** Public key of the program to assign as the owner of the created account */
-    programId: programId,
-  });
+  console.log("going to echo message: ", echo)
+  let tx = new Transaction();
 
   const idx = Buffer.from(new Uint8Array([0]));
   const messageLen = Buffer.from(new Uint8Array((new BN(echo.length)).toArray("le", 4)));
@@ -64,10 +54,9 @@ const main = async () => {
     data: Buffer.concat([idx, messageLen, message]),
   });
 
-  let tx = new Transaction();
-  tx.add(createIx).add(echoIx);
+  tx.add(echoIx);
 
-let txid = undefined
+  let txid = undefined
   try {
     txid = await sendAndConfirmTransaction(
       connection,
@@ -76,7 +65,7 @@ let txid = undefined
       {
         skipPreflight: true,
         preflightCommitment: "confirmed",
-        confirmation: "confirmed",
+        commitment: "confirmed",
       }
     );
 
@@ -84,13 +73,14 @@ let txid = undefined
     console.log(error)
   }
   let explorerCluster = "custom&customUrl=http://localhost:8899"
-  if (URL.includes("devnet")) {
+  if (rpcUrl.includes("devnet")) {
     explorerCluster = "devnet"
   }
   console.log(`https://explorer.solana.com/tx/${txid}?cluster=${explorerCluster}`);
 
-  data = (await connection.getAccountInfo(echoBuffer.publicKey)).data;
-  console.log("Echo Buffer Text:", data.toString());
+  let data = (await connection.getAccountInfo(echoBuffer.publicKey) || {}).data;
+  console.log("Echo Buffer Text:", data?.toString());
+
 };
 
 main()

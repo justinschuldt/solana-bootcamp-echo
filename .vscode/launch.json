@@ -5,16 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "name": "echo.ts",
+            "type": "node",
             "request": "launch",
-            "name": "echo.js",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/js/echo.js",
-            "args": ["asdfasdfasdf"]
+            "args": ["${workspaceFolder}/js/echo.ts", "wooooooooaah, it worked!"],
+            "runtimeArgs": ["--nolazy", "-r", "${workspaceRoot}/js/node_modules/ts-node/register"],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
         },
-
+        {
+            "name": "echo-fail.ts",
+            "type": "node",
+            "request": "launch",
+            "args": ["${workspaceFolder}/js/echo-fail.ts", "should-fail."],
+            "runtimeArgs": ["--nolazy", "-r", "${workspaceRoot}/js/node_modules/ts-node/register"],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+        },
         {
             "name": "authEcho.ts",
             "type": "node",
