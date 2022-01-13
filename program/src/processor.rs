@@ -89,11 +89,9 @@ impl Processor {
                 Ok(())
             }
             EchoInstruction::InitializeAuthorizedEcho {
-                // buffer_seed,
-                // buffer_size,
+                buffer_seed,
+                buffer_size,
             } => {
-                let buffer_seed: u64 = 123456;
-                let buffer_size: usize = 124;
                 msg!("Instruction: InitializeAuthorizedEcho {} {}",buffer_seed, buffer_size);
 
                 let accounts_iter = &mut accounts.iter();
@@ -137,18 +135,18 @@ impl Processor {
                 // invoke: use when no PDAs
                 // invoke_signed: use when PDAs sign
                 msg!("going to invoke_signed");
-                let res = invoke_signed(
+                invoke_signed(
                     &system_instruction::create_account(
                         authority.key,
                         &authorized_buffer_key,
-                        Rent::get()?.minimum_balance(buffer_size),
+                        Rent::get()?.minimum_balance(buffer_size.try_into().unwrap()),
                         buffer_size.try_into().unwrap(),
                         program_id,
                     ),
                     &[authority.clone(), authorized_buffer_ai.clone(), system_program.clone()],
                     &[&[b"authority", authority.key.as_ref(), &buffer_seed.to_le_bytes(), &[bump_seed]]],
-                );
-                msg!("invoke_signed res {:?}", res);
+                )?;
+                msg!("invoke_signed!");
     
                 assert_with_msg(
                     *system_program.key == SYSTEM_PROGRAM_ID,
@@ -178,6 +176,22 @@ impl Processor {
                 let buffer_seed = auth_buff_header.buffer_seed;
                 msg!("bump_seed {}", bump_seed);
                 msg!("buffer_seed {}", buffer_seed);
+
+                let (authorized_buffer_key, derived_bump_seed) = Pubkey::find_program_address(
+                    &[
+                        b"authority",
+                        authority.key.as_ref(),
+                        &buffer_seed.to_le_bytes()
+                    ],
+                    program_id,
+                );
+                msg!("authorized_buffer_key {}", authorized_buffer_key);
+                msg!("derived_bump_seed {}", derived_bump_seed);
+                assert_with_msg(
+                    bump_seed == derived_bump_seed,
+                    ProgramError::InvalidArgument,
+                    "Invalid authority",
+                )?;
 
                 let auth_pubkey = Pubkey::create_program_address(
                     &[

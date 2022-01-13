@@ -29,8 +29,8 @@ pub enum EchoInstruction {
     /// | 1     | ❌       | ✅     | authority: Pubkey with sole write access to `authorized_buffer`           |
     /// | 2     | ❌       | ❌     | system_program: Used to allocate the buffer                               |
     InitializeAuthorizedEcho {
-        // buffer_seed: u64,
-        // buffer_size: usize,
+        buffer_seed: u64,
+        buffer_size: u64,
     },
 
 

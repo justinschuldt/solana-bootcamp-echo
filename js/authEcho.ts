@@ -9,6 +9,7 @@ import {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js"
+import  {struct, u8,  nu64,} from "@solana/buffer-layout"
 
 import * as fs from "fs"
 const { readFile } = fs.promises
@@ -19,8 +20,8 @@ const { programId: programAddress} = lastDeploy
 
 import BN = require("bn.js")
 
-const rpcUrl = "http://127.0.0.1:8899"
-// const URL = "https://api.devnet.solana.com/"
+// const rpcUrl = "http://127.0.0.1:8899"
+const rpcUrl = "https://api.devnet.solana.com/"
 
 const explorerLink = (txid: string): string => {
   let explorerCluster = "custom&customUrl=http://localhost:8899"
@@ -31,13 +32,21 @@ const explorerLink = (txid: string): string => {
 }
 
 const initialize = (authBuffer: PublicKey,  authority: PublicKey,  programId: PublicKey, buffer_seed: number, buffer_size: number) => {
-  const idx = Buffer.from(new Uint8Array([1]));
-
-  let seedSizeLen = Buffer.from(new Uint8Array((new BN(buffer_size)).toArray("le")))
-  let seedBuf = new BN(buffer_seed).toBuffer()
-
-  let bufferSizeLen = Buffer.from(new Uint8Array((new BN(buffer_seed)).toArray("le")))
-  let sizeBuf = new BN(buffer_size).toBuffer()
+  const dataLayout = struct<{
+    instruction: number,
+    buffer_seed: number,
+    buffer_size: number
+  }>([
+    u8('instruction'),
+    nu64('buffer_seed'),
+    nu64('buffer_size'),
+  ]);
+  const data = Buffer.alloc(dataLayout.span);
+  dataLayout.encode({
+    instruction: 1,
+    buffer_seed,
+    buffer_size,
+  }, data);
 
   let i = new TransactionInstruction({
     keys: [
@@ -57,7 +66,7 @@ const initialize = (authBuffer: PublicKey,  authority: PublicKey,  programId: Pu
         isWritable: false,
       },
     ],
-    data: idx,
+    data,
     programId: programId,
   });
   console.log(i)
